@@ -217,10 +217,8 @@ def train_model(df):
     plt.xlabel("Predicted")
     plt.ylabel("True")
     plt.tight_layout()
-    plt.show()
     plt.savefig("outputs/confusion_matrix.png", dpi=150)
     print("Saved: outputs/confusion_matrix.png")
-    plt.close()
 
     # Feature importance
     importances = model.feature_importances_
@@ -231,10 +229,8 @@ def train_model(df):
     plt.xlabel("Importance Score")
     plt.title("Feature Importance for Predicting Student Outcome")
     plt.tight_layout()
-    plt.show()
     plt.savefig("outputs/feature_importance.png", dpi=150)
     print("Saved: outputs/feature_importance.png")
-    plt.close()
 
     return model
 
