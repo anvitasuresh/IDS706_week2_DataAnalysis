@@ -1,4 +1,4 @@
-# Mini-Assignment 2 — Student Dropout & Success Analysis
+# Mini-Assignment 2 — Student Dropout & Success Data Analysis
 
 **Course:** IDS 706 – Data Engineering  
 **Goal:** Build a simple, end-to-end data analysis: ingest data, clean and preprocess using pandas, data transformations, machine learning model using random forest implementation for feature importance, visualizations with matplotlib, plus a Polars vs Pandas performance comparison.
@@ -39,10 +39,10 @@ IDS706_week2_DataAnalysis/
   - `first_sem_pass_rate = approved/enrolled (1st sem)`
   - `second_sem_pass_rate = approved/enrolled (2nd sem)`
   - `total_approved`, `avg_grade`
-- **Machine Learning (beginner-friendly):**
-  - Random Forest Classifier (80/20 train/test split)
+- **Machine Learning:**
+  - Random Forest Classifier (80/20 train/test split) combined the predictions of many decision trees to learn patterns in the student data and classify each student as Dropout (0), Enrolled (1), or Graduate (2)
   - Accuracy, classification report, confusion matrix
-  - feature importance bar chart
+  - Feature importance bar chart
 - **Visualization:**
   - Target distribution
   - Top 10 correlations with Target
@@ -63,7 +63,7 @@ IDS706_week2_DataAnalysis/
 python -m venv .venv
 source .venv/bin/activate
 ```
-### 2. Understanding dependencies used
+### 2. Understanding dependencies/tools Used
 
 - **pandas>=1.3.0** – Data manipulation and analysis  
 - **numpy>=1.21.0** – Numerical computing  
@@ -79,15 +79,15 @@ source .venv/bin/activate
 - **pylint** – Additional static code analysis  
 - **pytest-cov** – Coverage reporting  
 
-### Running analysis
+### 3. Running analysis
 
 - **Clone the repository**
 `https://github.com/anvitasuresh/IDS706_week2_DataAnalysis.git`
 
 - **Run analysis**
-`make all` which runs the complete workflow. You can also run other make commands like make install to install and upgrade dependencies, make format to format code using black, make lint to lint code using flake8, make run to execute the analysis, and make clean to remove cache files. 
+`make all` which runs the complete workflow. You can also run other make commands like make install to install and upgrade dependencies, make format to format code using black, make lint to lint code using flake8, make run to execute the analysis, and make clean to remove cache files. The makefile is used to automate the process of building, compiling, and managing software projects.
 
-### Key Findings
+## Key Findings
 
 The analysis shows several important factors that influence whether a student drops out, stays enrolled, or graduates:
 - Curricular Unit Performance: Students with higher first and second semester pass rates were far more likely to graduate.
@@ -96,7 +96,7 @@ The analysis shows several important factors that influence whether a student dr
 - Age at Enrollment:Younger students tended to have higher enrollment continuity, while older students showed higher dropout tendencies.
 
 **Machine Learning Results:**
-- Accuracy: ~78%
+- Accuracy: ~78% -> This confusion matrix shows how well the Random Forest classified students into the three categories: 1. Dropout (0): 189 correctly predicted, but 34 misclassified as Enrolled (1) and 31 as Graduate (2), 2. Enrolled (1): 47 correctly predicted, but 23 were misclassified as Dropout (0) and 45 as Graduate (2) → this class was the hardest to predict, 3. Graduate (2): 354 correctly predicted, with small misclassifications (11 as Dropout, 24 as Enrolled).
 - Most Important Predictors (Random Forest feature importance): 1. Pass rates (first and second semester), 2. Total approved units, 3. Average grade, 4. Tuition fee status
 
 **Visualization Results:**
