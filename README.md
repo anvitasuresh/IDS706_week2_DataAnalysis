@@ -16,13 +16,14 @@ Source: https://www.kaggle.com/datasets/thedevastator/higher-education-predictor
 
 ## Repo Structure
 
+```bash
 IDS706_week2_DataAnalysis/
 ├── analysis.py            # main script (pandas pipeline + Polars comparison)
 ├── dataset.csv            # dataset used in this project
 ├── requirements.txt       # Python dependencies
 ├── Makefile               # install / lint / run helpers
 └── outputs/               # saved PNG visualizations
-
+```
 
 ---
 
@@ -39,7 +40,7 @@ IDS706_week2_DataAnalysis/
   - `second_sem_pass_rate = approved/enrolled (2nd sem)`
   - `total_approved`, `avg_grade`
 - **Machine Learning (beginner-friendly):**
-  - `RandomForestClassifier` (80/20 train/test split)
+  - Random Forest Classifier (80/20 train/test split)
   - Accuracy, classification report, confusion matrix
   - feature importance bar chart
 - **Visualization:**
@@ -89,14 +90,14 @@ source .venv/bin/activate
 ### Key Findings
 
 The analysis shows several important factors that influence whether a student drops out, stays enrolled, or graduates:
-	•	Curricular Unit Performance: Students with higher first and second semester pass rates were far more likely to graduate.
-	•	Scholarship Status: Scholarship holders showed higher graduation rates and lower dropout rates compared to non-scholarship students.
-	•	Tuition Fee Status:Students who kept tuition fees up-to-date had significantly lower dropout risk.
-	•	Age at Enrollment:Younger students tended to have higher enrollment continuity, while older students showed higher dropout tendencies.
+- Curricular Unit Performance: Students with higher first and second semester pass rates were far more likely to graduate.
+- Scholarship Status: Scholarship holders showed higher graduation rates and lower dropout rates compared to non-scholarship students.
+- Tuition Fee Status:Students who kept tuition fees up-to-date had significantly lower dropout risk.
+- Age at Enrollment:Younger students tended to have higher enrollment continuity, while older students showed higher dropout tendencies.
 
 **Machine Learning Results:**
-	•	Accuracy: ~78%
-	•	Most Important Predictors (Random Forest feature importance): 1. Pass rates (first and second semester), 2. Total approved units, 3. Average grade, 4. Tuition fee status
+- Accuracy: ~78%
+- Most Important Predictors (Random Forest feature importance): 1. Pass rates (first and second semester), 2. Total approved units, 3. Average grade, 4. Tuition fee status
 
 **Visualization Results:**
 The visualizations highlight clear relationships between certain factors and student outcomes. The target distribution plot shows that graduates make up the largest group, followed by dropouts and then currently enrolled students. Boxplots of age vs target reveal that older students are more likely to drop out, while younger students tend to graduate. Tuition fees status and scholarship plots show strong associations with outcomes—students who keep fees up to date and scholarship holders have noticeably higher graduation rates. The correlation heatmap and top 10 feature correlations confirm that academic performance metrics, such as pass rates and total approved units, are the strongest predictors of student success.
