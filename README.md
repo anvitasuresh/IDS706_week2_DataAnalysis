@@ -1,1 +1,123 @@
-# IDS706_week2_DataAnalysis
+# Mini-Assignment 2 — Student Dropout & Success Analysis
+
+**Course:** IDS 706 – Data Engineering  
+**Goal:** Build a simple, end-to-end data analysis: ingest data, clean and preprocess using pandas, data transformations, machine learning model using random forest implementation for feature importance, visualizations with matplotlib, plus a Polars vs Pandas performance comparison.
+
+---
+
+## Research Question
+**Which factors most influence whether a student drops out, stays enrolled, or graduates?**
+
+We analyze the Kaggle dataset **“Predict Students’ Dropout and Academic Success”**. The project aims to identify the key factors that predict dropout, continued enrollment, or graduation.  
+
+Source: https://www.kaggle.com/datasets/thedevastator/higher-education-predictors-of-student-retention/data
+
+---
+
+## Repo Structure
+
+IDS706_week2_DataAnalysis/
+├── analysis.py            # main script (pandas pipeline + Polars comparison)
+├── dataset.csv            # dataset used in this project
+├── requirements.txt       # Python dependencies
+├── Makefile               # install / lint / run helpers
+└── outputs/               # saved PNG visualizations
+
+
+---
+
+## What this project shows
+- **Import the dataset:** `pandas.read_csv("dataset.csv")`
+- **Inspect & Clean:**
+  - Fix column names (e.g., `Nacionality` → `Nationality`)
+  - Coerce likely numeric columns
+  - Impute missing values and drop duplicates
+  - Numeric outlier filter (z-score)
+  - Encode **Target**: `Dropout=0, Enrolled=1, Graduate=2`
+- **Transform (Feature Engineering):**
+  - `first_sem_pass_rate = approved/enrolled (1st sem)`
+  - `second_sem_pass_rate = approved/enrolled (2nd sem)`
+  - `total_approved`, `avg_grade`
+- **Machine Learning (beginner-friendly):**
+  - `RandomForestClassifier` (80/20 train/test split)
+  - Accuracy, classification report, confusion matrix
+  - feature importance bar chart
+- **Visualization:**
+  - Target distribution
+  - Top 10 correlations with Target
+  - Age vs Target (box plot)
+  - Tuition status vs Target (countplot)
+  - Scholarship holder vs Target (countplot)
+  - Correlation heatmap for numeric features
+- **Polars:**
+  - minimal cleaning/feature steps in **Polars**
+  - quick **timing comparison**: load, clean, aggregate
+
+---
+
+## Setup & Usage
+
+### 1. Create & activate a virtual environment
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
+### 2. Understanding dependencies used
+
+- **pandas>=1.3.0** – Data manipulation and analysis  
+- **numpy>=1.21.0** – Numerical computing  
+- **matplotlib>=3.5.0** – Data visualization  
+- **seaborn** – Statistical visualizations  
+- **scikit-learn>=1.0.0** – Machine learning algorithms  
+- **scipy** – Statistical tools (used for outlier detection)  
+- **polars>=0.20.0** – High-performance DataFrame library (performance comparison with pandas)  
+
+### Developer Tools
+- **black** – Code formatting  
+- **flake8** – Code linting  
+- **pylint** – Additional static code analysis  
+- **pytest-cov** – Coverage reporting  
+
+### Running analysis
+
+- **Clone the repository**
+`https://github.com/anvitasuresh/IDS706_week2_DataAnalysis.git`
+
+- **Run analysis**
+`make all` which runs the complete workflow. You can also run other make commands like make install to install and upgrade dependencies, make format to format code using black, make lint to lint code using flake8, make run to execute the analysis, and make clean to remove cache files. 
+
+### Key Findings
+
+The analysis shows several important factors that influence whether a student drops out, stays enrolled, or graduates:
+	•	Curricular Unit Performance: Students with higher first and second semester pass rates were far more likely to graduate.
+	•	Scholarship Status: Scholarship holders showed higher graduation rates and lower dropout rates compared to non-scholarship students.
+	•	Tuition Fee Status:Students who kept tuition fees up-to-date had significantly lower dropout risk.
+	•	Age at Enrollment:Younger students tended to have higher enrollment continuity, while older students showed higher dropout tendencies.
+
+**Machine Learning Results:**
+	•	Accuracy: ~78%
+	•	Most Important Predictors (Random Forest feature importance): 1. Pass rates (first and second semester), 2. Total approved units, 3. Average grade, 4. Tuition fee status
+
+**Visualization Results:**
+The visualizations highlight clear relationships between certain factors and student outcomes. The target distribution plot shows that graduates make up the largest group, followed by dropouts and then currently enrolled students. Boxplots of age vs target reveal that older students are more likely to drop out, while younger students tend to graduate. Tuition fees status and scholarship plots show strong associations with outcomes—students who keep fees up to date and scholarship holders have noticeably higher graduation rates. The correlation heatmap and top 10 feature correlations confirm that academic performance metrics, such as pass rates and total approved units, are the strongest predictors of student success.
+
+### Performance Analysis
+
+To evaluate efficiency, we compared pandas and polars for three common steps: data loading, cleaning, and grouping.
+
+```bash
+Load:    pandas 0.0159s | polars 0.0168s
+Clean:   pandas 0.0102s | polars 0.0340s
+GroupBy: pandas 0.0017s | polars 0.0045s
+TOTAL:   pandas 0.0278s | polars 0.0552s
+Result:  Pandas faster this run
+```
+
+For this dataset, pandas performed slightly faster overall. However, the differences are small, and polars is designed to perform better on larger datasets. This exercise illustrates how performance can vary depending on dataset size and highlights the potential scalability of polars.
+
+### Conclusion
+
+This analysis explored the factors influencing student dropout and success using the provided dataset. Through data cleaning, feature engineering, machine learning, and visualization, we found that academic performance indicators (such as pass rates, total approved courses, and average grades) are the strongest predictors of student outcomes. Other variables (like tuition payment status and scholarships) also showed meaningful relationships with dropout or graduation probability.
+
+Overall, the project demonstrates how a structured workflow—from data ingestion to ML and visualization—can reveal actionable insights. While pandas was sufficient for this dataset size, polars offers scalability advantages for larger datasets, making it a valuable tool for future, more complex analyses.
+
