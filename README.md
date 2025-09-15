@@ -113,11 +113,11 @@ This project includes:
 
 After you run the tests using `make test`, you should discover an output like below:
 
-![Test Results](test_results.png)
-![Test Results](test_results1.png)
-![Test Results](test_results2.png)
-![Test Results](test_results3.png)
-![Test Results](test_results4.png)
+![Test Results](testing/test_results.png)
+![Test Results](testing/test_results1.png)
+![Test Results](testing/test_results2.png)
+![Test Results](testing/test_results3.png)
+![Test Results](testing/test_results4.png)
 
 ---
 
