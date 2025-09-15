@@ -1,0 +1,27 @@
+{
+  "name": "IDS706 Week2 Dev",
+  "build": {
+    "dockerfile": "../Dockerfile",   // 👈 point to root-level Dockerfile
+    "context": ".."
+  },
+  "workspaceFolder": "/work",
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/work,type=bind"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-azuretools.vscode-docker",
+        "ms-vscode.makefile-tools"
+      ],
+      "settings": {
+        "python.testing.pytestEnabled": true,
+        "python.testing.pytestArgs": ["tests"],
+        "python.formatting.provider": "black"
+      }
+    }
+  },
+  "postCreateCommand": "pip install -r requirements.txt"
+}
