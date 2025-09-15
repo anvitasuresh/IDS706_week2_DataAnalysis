@@ -1,7 +1,7 @@
-# Mini-Assignment 2 — Student Dropout & Success Data Analysis
+# Mini-Assignment 2 — Student Dropout & Success Analysis
 
 **Course:** IDS 706 – Data Engineering  
-**Goal:** Build a simple, end-to-end data analysis: ingest data, clean and preprocess using pandas, data transformations, machine learning model using random forest implementation for feature importance, visualizations with matplotlib, plus a Polars vs Pandas performance comparison.
+**Goal:** Build a simple, end-to-end data analysis: ingest data, clean and preprocess using pandas, data transformations, machine learning model using random forest implementation for feature importance, visualizations with matplotlib, plus a Polars vs Pandas performance comparison. Additionally, create meaningful unit and system tests and set up a development environment using Dev Container and Docker
 
 ---
 
@@ -19,9 +19,13 @@ Source: https://www.kaggle.com/datasets/thedevastator/higher-education-predictor
 ```bash
 IDS706_week2_DataAnalysis/
 ├── analysis.py            # main script (pandas pipeline + Polars comparison)
+├── test_analysis.py       # tests main script
 ├── dataset.csv            # dataset used in this project
 ├── requirements.txt       # Python dependencies
 ├── Makefile               # install / lint / run helpers
+├── Dockerfile             # Docker build for reproducible env
+├── .devcontainer          # VS Code Dev Container setup
+      └── devcontainer.json
 └── outputs/               # saved PNG visualizations
 ```
 
@@ -39,10 +43,10 @@ IDS706_week2_DataAnalysis/
   - `first_sem_pass_rate = approved/enrolled (1st sem)`
   - `second_sem_pass_rate = approved/enrolled (2nd sem)`
   - `total_approved`, `avg_grade`
-- **Machine Learning:**
-  - Random Forest Classifier (80/20 train/test split) combined the predictions of many decision trees to learn patterns in the student data and classify each student as Dropout (0), Enrolled (1), or Graduate (2)
+- **Machine Learning (beginner-friendly):**
+  - Random Forest Classifier (80/20 train/test split)
   - Accuracy, classification report, confusion matrix
-  - Feature importance bar chart
+  - feature importance bar chart
 - **Visualization:**
   - Target distribution
   - Top 10 correlations with Target
@@ -53,6 +57,9 @@ IDS706_week2_DataAnalysis/
 - **Polars:**
   - minimal cleaning/feature steps in **Polars**
   - quick **timing comparison**: load, clean, aggregate
+- **Testing**
+  - Unit, integration, system, and performance tests with coverage
+  - Docker & VS Code Dev Containers for reproducibility
 
 ---
 
@@ -63,7 +70,7 @@ IDS706_week2_DataAnalysis/
 python -m venv .venv
 source .venv/bin/activate
 ```
-### 2. Understanding dependencies/tools Used
+### 2. Understanding dependencies used
 
 - **pandas>=1.3.0** – Data manipulation and analysis  
 - **numpy>=1.21.0** – Numerical computing  
@@ -81,11 +88,38 @@ source .venv/bin/activate
 
 ### 3. Running analysis
 
-- **Clone the repository**
-`https://github.com/anvitasuresh/IDS706_week2_DataAnalysis.git`
+- **Clone the repository (Local)**
+` git clone https://github.com/anvitasuresh/IDS706_week2_DataAnalysis.git`
 
 - **Run analysis**
-`make all` which runs the complete workflow. You can also run other make commands like make install to install and upgrade dependencies, make format to format code using black, make lint to lint code using flake8, make run to execute the analysis, and make clean to remove cache files. The makefile is used to automate the process of building, compiling, and managing software projects.
+`make all` which runs the complete workflow. You can also run other make commands like make install to install and upgrade dependencies, make format to format code using black, make lint to lint code using flake8, make run to execute the analysis, and make clean to remove cache files. You can also run make test which tests the functions in analysis.py.
+
+- **Build the Docker image and run inside container**
+
+```bash
+docker build -t dropout-analysis:dev .
+docker run --rm -it -v "$PWD":/work -w /work dropout-analysis:dev bash -lc "make tests"
+```
+
+- **VS Code Dev Container**
+Install Docker Desktop, VS Code, and the Dev Container extensions. Then press View → Command Palette → “Dev Containers: Reopen in Container”. Inside the container we can run make test as well. 
+
+### 4. Testing
+This project includes:
+- Unit tests (data loading, cleaning, feature engineering, ML behavior)
+- Integration tests (end-to-end Pandas & Polars pipelines)
+- System tests (CSV → pipeline → model)
+- Performance test (quick runtime check under 3s)
+
+After you run the tests using `make test`, you should discover an output like below:
+
+![Test Results](test_results.png)
+![Test Results](test_results1.png)
+![Test Results](test_results2.png)
+![Test Results](test_results3.png)
+![Test Results](test_results4.png)
+
+---
 
 ## Key Findings
 
@@ -96,7 +130,7 @@ The analysis shows several important factors that influence whether a student dr
 - Age at Enrollment:Younger students tended to have higher enrollment continuity, while older students showed higher dropout tendencies.
 
 **Machine Learning Results:**
-- Accuracy: ~78% -> This confusion matrix shows how well the Random Forest classified students into the three categories: 1. Dropout (0): 189 correctly predicted, but 34 misclassified as Enrolled (1) and 31 as Graduate (2), 2. Enrolled (1): 47 correctly predicted, but 23 were misclassified as Dropout (0) and 45 as Graduate (2) → this class was the hardest to predict, 3. Graduate (2): 354 correctly predicted, with small misclassifications (11 as Dropout, 24 as Enrolled).
+- Accuracy: ~78%
 - Most Important Predictors (Random Forest feature importance): 1. Pass rates (first and second semester), 2. Total approved units, 3. Average grade, 4. Tuition fee status
 
 **Visualization Results:**
@@ -121,4 +155,6 @@ For this dataset, pandas performed slightly faster overall. However, the differe
 This analysis explored the factors influencing student dropout and success using the provided dataset. Through data cleaning, feature engineering, machine learning, and visualization, we found that academic performance indicators (such as pass rates, total approved courses, and average grades) are the strongest predictors of student outcomes. Other variables (like tuition payment status and scholarships) also showed meaningful relationships with dropout or graduation probability.
 
 Overall, the project demonstrates how a structured workflow—from data ingestion to ML and visualization—can reveal actionable insights. While pandas was sufficient for this dataset size, polars offers scalability advantages for larger datasets, making it a valuable tool for future, more complex analyses.
+
+
 
