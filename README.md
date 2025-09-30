@@ -1,5 +1,7 @@
 # Mini-Assignment 2 — Student Dropout & Success Analysis
 
+[![CI](https://github.com/anvitasuresh/IDS706_week2_DataAnalysis/actions/workflows/ci.yml/badge.svg)](https://github.com/anvitasuresh/IDS706_week2_DataAnalysis/actions/workflows/ci.yml)
+
 **Course:** IDS 706 – Data Engineering  
 **Goal:** Build a simple, end-to-end data analysis: ingest data, clean and preprocess using pandas, data transformations, machine learning model using random forest implementation for feature importance, visualizations with matplotlib, plus a Polars vs Pandas performance comparison. Additionally, create meaningful unit and system tests and set up a development environment using Dev Container and Docker
 
