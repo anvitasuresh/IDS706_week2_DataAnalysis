@@ -1,7 +1,9 @@
 # Mini-Assignment 2 — Student Dropout & Success Analysis
 
+[![CI](https://github.com/anvitasuresh/IDS706_week2_DataAnalysis/actions/workflows/ci.yml/badge.svg)](https://github.com/anvitasuresh/IDS706_week2_DataAnalysis/actions/workflows/ci.yml)
+
 **Course:** IDS 706 – Data Engineering  
-**Goal:** Build a simple, end-to-end data analysis: ingest data, clean and preprocess using pandas, data transformations, machine learning model using random forest implementation for feature importance, visualizations with matplotlib, plus a Polars vs Pandas performance comparison. Additionally, create meaningful unit and system tests and set up a development environment using Dev Container and Docker
+**Goal:** Build a simple, end-to-end data analysis: ingest data, clean and preprocess using pandas, data transformations, machine learning model using random forest implementation for feature importance, visualizations with matplotlib, plus a Polars vs Pandas performance comparison. Additionally, create meaningful unit and system tests and set up a development environment using Dev Container and Docker. Lastly, set up Continuous Integration and refactor the code to ensure reproducibility for future use.
 
 ---
 
@@ -26,6 +28,8 @@ IDS706_week2_DataAnalysis/
 ├── Dockerfile             # Docker build for reproducible env
 ├── .devcontainer          # VS Code Dev Container setup
       └── devcontainer.json
+├── .github/workflows 
+      └── ci.yml           # Set up CI workflow
 └── outputs/               # saved PNG visualizations
 ```
 
@@ -59,9 +63,16 @@ IDS706_week2_DataAnalysis/
   - quick **timing comparison**: load, clean, aggregate
 - **Testing**
   - Unit, integration, system, and performance tests with coverage
-  - Docker & VS Code Dev Containers for reproducibility
+  - Docker & VS Code Dev Containers for reproducibility and full development environment setup
+  - CI workflow (GitHub Actions) with Black, Flake8, Pytest
+  - Makefile for automated workflow
 
 ---
+## CI/CD Pipeline and Refactoring
+
+To automate this project, we added Continious Integration using Github Actions. To ensure that the workflow is running properly, go to the Actions tab and make sure the tests are passing. It should look something like the below image. 
+
+![Workflow](testing/workflow.png)
 
 ## Setup & Usage
 
