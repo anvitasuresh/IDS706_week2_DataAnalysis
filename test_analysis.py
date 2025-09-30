@@ -54,7 +54,7 @@ class TestUnit(unittest.TestCase):
         finally:
             os.remove(tmp.name)
 
-    def test_clean_data_encodes_target_and_drops_dupes_outliers(self):
+    def test_clean_encode(self):
         df = pd.DataFrame(
             {
                 "Target": ["Dropout", "Enrolled", "Graduate"],
@@ -69,7 +69,7 @@ class TestUnit(unittest.TestCase):
         # duplicate removed; outlier likely removed
         self.assertLessEqual(len(cleaned), 3)
 
-    def test_engineer_features_creates_columns(self):
+    def test_engineer_features(self):
         df = pd.DataFrame(
             {
                 "Target": [0, 1, 2],
@@ -97,7 +97,7 @@ class TestUnit(unittest.TestCase):
 class TestIntegration(unittest.TestCase):
     """Integration tests for small pipelines."""
 
-    def _make_small_df(self, as_strings=False):
+    def small_df(self, as_strings=False):
         # minimal columns to run through cleaning + feature eng + ML
         target_vals = ["Dropout", "Enrolled", "Graduate"] if as_strings else [0, 1, 2]
         return pd.DataFrame(
@@ -115,7 +115,7 @@ class TestIntegration(unittest.TestCase):
         )
 
     def test_pandas_pipeline_end_to_end(self):
-        df = self._make_small_df(as_strings=True)
+        df = self.small_df(as_strings=True)
         cleaned = clean_data(df, target="Target", outlier_z=3.5)
         feat = engineer_features(cleaned)
         # one quick groupby to validate aggregations on engineered columns
@@ -127,15 +127,15 @@ class TestIntegration(unittest.TestCase):
         model = train_model(feat)
         self.assertIsNotNone(model)
 
-    def test_polars_pipeline_consistency_with_pandas_counts(self):
+    def test_polars_pipeline(self):
         # compare row counts after very light polars cleaning/engineering
-        df_pd = self._make_small_df(as_strings=True)
+        df_pd = self.small_df(as_strings=True)
         df_pl = pl.DataFrame(df_pd)
 
         cleaned_pd = clean_data(df_pd, target="Target", outlier_z=3.5)
         eng_pd = engineer_features(cleaned_pd)
 
-        df_pd = self._make_small_df(as_strings=True)
+        df_pd = self.small_df(as_strings=True)
         df_pl = pl.DataFrame(df_pd)
 
         cleaned_pd = clean_data(df_pd, target="Target", outlier_z=3.5)
@@ -224,7 +224,7 @@ class TestSystem(unittest.TestCase):
 
 class TestPerformanceSmoke(unittest.TestCase):
 
-    def test_small_data_finishes_quickly(self):
+    def test_finish_time(self):
         df = pd.DataFrame(
             {
                 "Target": [0, 1, 2] * 40,
