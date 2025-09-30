@@ -3,7 +3,7 @@
 [![CI](https://github.com/anvitasuresh/IDS706_week2_DataAnalysis/actions/workflows/ci.yml/badge.svg)](https://github.com/anvitasuresh/IDS706_week2_DataAnalysis/actions/workflows/ci.yml)
 
 **Course:** IDS 706 – Data Engineering  
-**Goal:** Build a simple, end-to-end data analysis: ingest data, clean and preprocess using pandas, data transformations, machine learning model using random forest implementation for feature importance, visualizations with matplotlib, plus a Polars vs Pandas performance comparison. Additionally, create meaningful unit and system tests and set up a development environment using Dev Container and Docker. Lastly, set up Continuous Integration and refactor the code to ensure reproducibility for future use.
+**Goal:** We want to build a simple, end-to-end data analysis pipeline. It must include steps such as ingesting data, cleaning and preprocessing using pandas, transforming data and extracting critical features, implementing a machine learning model like random forests for feature importance, creating visualizations with matplotlib, plus comparing Polars vs Pandas performance. Additionally, create meaningful unit and system tests and set up a development environment using Dev Container and Docker. Lastly, set up Continuous Integration and refactor the code to ensure that the code is reproducible and easy to follow.
 
 ---
 
@@ -70,7 +70,7 @@ IDS706_week2_DataAnalysis/
 ---
 ## CI/CD Pipeline and Refactoring
 
-To automate this project, OI added Continious Integration using Github Actions. To ensure that the workflow is running properly, go to the Actions tab and make sure the tests are passing. It should look something like the below image. 
+To automate this project, I added Continious Integration using Github Actions. This was done using a `ci.yaml` file which basically tells GitHub what to do automatically whenever you push to your repository. The following steps are outlined in the file: set up Python, install dependencies, runs linting (flake8), runs formatting check (black), runs your tests (pytest with coverage), runs the analysis script. To ensure that the workflow is running properly, go to the Actions tab and make sure the tests are passing. It should look something like the below image. 
 
 ![Workflow](testing/workflow.png)
 
@@ -83,7 +83,7 @@ I also incorporated some refactoring to make the code more readable and easier t
 
 ### Extracting Methods
 
-It is also important to extract methods to simplify code blocks and make them easier to follow. Below, we did this with a couple functions like drop duplicates and remove outliers to improve the organization of the code. 
+It is also important to extract methods to simplify code blocks and make them easier to follow. To extract methods or variables in the future, click the Code Action light bulb or use the Quick Fix command ⌘ and choose extract method/variable. Below, we did this with a couple functions like drop duplicates and remove outliers to improve the organization of the code. 
 
 ![Extract](testing/extract.png)
 ![Extract](testing/extract2.png)
