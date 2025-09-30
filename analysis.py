@@ -17,8 +17,8 @@ from sklearn.metrics import accuracy_score, classification_report, confusion_mat
 
 def load_data(csv_path: str) -> pd.DataFrame:
     print("Loading data for Student Dropout and Academic Success…")
-    df = pd.read_csv(csv_path)
-    return df
+    student_outcome_df = pd.read_csv(csv_path)
+    return student_outcome_df
 
 
 def inspect(df: pd.DataFrame):
@@ -42,17 +42,19 @@ def inspect(df: pd.DataFrame):
 
 
 def clean_data(
-    df: pd.DataFrame, target: str = "Target", outlier_z: float | None = 3.5
+    df_cleaned: pd.DataFrame, target: str = "Target", outlier_z: float | None = 3.5
 ) -> pd.DataFrame:
 
-    df = df.copy()
+    df_cleaned = df_cleaned.copy()
 
     # Normalize column names
-    df.columns = df.columns.str.strip().str.replace(r"\s+", " ", regex=True)
+    df_cleaned.columns = df_cleaned.columns.str.strip().str.replace(
+        r"\s+", " ", regex=True
+    )
 
     # Fix misspelling seen in column name
-    if "Nacionality" in df.columns and "Nationality" not in df.columns:
-        df.rename(columns={"Nacionality": "Nationality"}, inplace=True)
+    if "Nacionality" in df_cleaned.columns and "Nationality" not in df_cleaned.columns:
+        df_cleaned.rename(columns={"Nacionality": "Nationality"}, inplace=True)
 
     # Change to numeric columns
     numeric_like_cols = [
@@ -75,110 +77,130 @@ def clean_data(
         "GDP",
     ]
     for col in numeric_like_cols:
-        if col in df.columns:
-            df[col] = pd.to_numeric(df[col], errors="coerce")
+        if col in df_cleaned.columns:
+            df_cleaned[col] = pd.to_numeric(df_cleaned[col], errors="coerce")
 
     # Missing values
     print("\n=== Missing values before ===")
-    print(df.isna().sum().sort_values(ascending=False).head(25))
+    print(df_cleaned.isna().sum().sort_values(ascending=False).head(25))
 
     # Imputing missing vals in columns
-    num_cols = [
-        c for c in df.columns if c != target and pd.api.types.is_numeric_dtype(df[c])
+    numeric_cols = [
+        c
+        for c in df_cleaned.columns
+        if c != target and pd.api.types.is_numeric_dtype(df_cleaned[c])
     ]
-    cat_cols = [c for c in df.columns if c != target and df[c].dtype == "object"]
+    categorical_cols = [
+        c for c in df_cleaned.columns if c != target and df_cleaned[c].dtype == "object"
+    ]
 
-    for c in num_cols:
-        if df[c].isna().any():
-            df[c] = df[c].fillna(df[c].median())
+    for c in numeric_cols:
+        if df_cleaned[c].isna().any():
+            df_cleaned[c] = df_cleaned[c].fillna(df_cleaned[c].median())
 
-    for c in cat_cols:
-        if df[c].isna().any():
-            mode_vals = df[c].mode(dropna=True)
+    for c in categorical_cols:
+        if df_cleaned[c].isna().any():
+            mode_vals = df_cleaned[c].mode(dropna=True)
             if not mode_vals.empty:
-                df[c] = df[c].fillna(mode_vals.iloc[0])
+                df_cleaned[c] = df_cleaned[c].fillna(mode_vals.iloc[0])
 
     # Dropping duplicates
-    before = len(df)
-    df = df.drop_duplicates()
-    dropped = before - len(df)
-    if dropped > 0:
-        print(f"Dropped {dropped} duplicate rows.")
+    df_cleaned = drop_dupes(df_cleaned)
 
     # Remove numeric outliers via z-score
-    if outlier_z is not None and len(num_cols) > 0:
-        from scipy import stats  # local import to keep top imports tidy
-
-        z = np.abs(stats.zscore(df[num_cols], nan_policy="omit"))
-        keep = (np.isnan(z) | (z < outlier_z)).all(axis=1)
-        kept = int(keep.sum())
-        print(f"Outlier filter: kept {kept}/{len(df)} rows (z < {outlier_z}).")
-        df = df.loc[keep].copy()
+    df_cleaned = remove_outliers(df_cleaned, outlier_z, numeric_cols)
 
     # Encode target to numeric
-    if df[target].dtype == "object":
+    if df_cleaned[target].dtype == "object":
         mapping = {"Dropout": 0, "Enrolled": 1, "Graduate": 2}
 
-        if set(df[target].unique()).issubset(set(mapping.keys())):
-            df[target] = df[target].map(mapping)
+        if set(df_cleaned[target].unique()).issubset(set(mapping.keys())):
+            df_cleaned[target] = df_cleaned[target].map(mapping)
 
     # Report missing
     print("\n=== Missing values after ===")
-    print(df.isna().sum().sort_values(ascending=False).head(25))
+    print(df_cleaned.isna().sum().sort_values(ascending=False).head(25))
 
-    print(f"\nCleaned shape: {df.shape}")
+    print(f"\nCleaned shape: {df_cleaned.shape}")
     print(f"\n{target} distribution:")
-    print(df[target].value_counts(dropna=False))
+    print(df_cleaned[target].value_counts(dropna=False))
 
-    return df
+    return df_cleaned
+
+
+def drop_dupes(df_cleaned):
+    before = len(df_cleaned)
+    df_cleaned = df_cleaned.drop_duplicates()
+    dropped = before - len(df_cleaned)
+    if dropped > 0:
+        print(f"Dropped {dropped} duplicate rows.")
+    return df_cleaned
+
+
+def remove_outliers(df_cleaned, outlier_z, numeric_cols):
+    if outlier_z is not None and len(numeric_cols) > 0:
+        from scipy import stats  # local import to keep top imports tidy
+
+        z = np.abs(stats.zscore(df_cleaned[numeric_cols], nan_policy="omit"))
+        keep = (np.isnan(z) | (z < outlier_z)).all(axis=1)
+        kept = int(keep.sum())
+        print(f"Outlier filter: kept {kept}/{len(df_cleaned)} rows (z < {outlier_z}).")
+        df_cleaned = df_cleaned.loc[keep].copy()
+    return df_cleaned
 
 
 # --------------------------- Data Transformation ---------------------------
 
 
-def engineer_features(df: pd.DataFrame, target: str = "Target") -> pd.DataFrame:
+def engineer_features(
+    df_engineer: pd.DataFrame, target: str = "Target"
+) -> pd.DataFrame:
 
-    df = df.copy()
+    df_engineer = df_engineer.copy()
 
     # Approved/Enrolled ratios per semester
     if {
         "Curricular units 1st sem (approved)",
         "Curricular units 1st sem (enrolled)",
-    }.issubset(df.columns):
-        denom = df["Curricular units 1st sem (enrolled)"].replace({0: np.nan})
-        df["first_sem_pass_rate"] = df["Curricular units 1st sem (approved)"] / denom
+    }.issubset(df_engineer.columns):
+        denom = df_engineer["Curricular units 1st sem (enrolled)"].replace({0: np.nan})
+        df_engineer["first_sem_pass_rate"] = (
+            df_engineer["Curricular units 1st sem (approved)"] / denom
+        )
 
     if {
         "Curricular units 2nd sem (approved)",
         "Curricular units 2nd sem (enrolled)",
-    }.issubset(df.columns):
-        denom2 = df["Curricular units 2nd sem (enrolled)"].replace({0: np.nan})
-        df["second_sem_pass_rate"] = df["Curricular units 2nd sem (approved)"] / denom2
+    }.issubset(df_engineer.columns):
+        denom2 = df_engineer["Curricular units 2nd sem (enrolled)"].replace({0: np.nan})
+        df_engineer["second_sem_pass_rate"] = (
+            df_engineer["Curricular units 2nd sem (approved)"] / denom2
+        )
 
     # Total approved & average grade across semesters
     if {
         "Curricular units 1st sem (approved)",
         "Curricular units 2nd sem (approved)",
-    }.issubset(df.columns):
-        df["total_approved"] = (
-            df["Curricular units 1st sem (approved)"]
-            + df["Curricular units 2nd sem (approved)"]
+    }.issubset(df_engineer.columns):
+        df_engineer["total_approved"] = (
+            df_engineer["Curricular units 1st sem (approved)"]
+            + df_engineer["Curricular units 2nd sem (approved)"]
         )
 
     if {
         "Curricular units 1st sem (grade)",
         "Curricular units 2nd sem (grade)",
-    }.issubset(df.columns):
-        df["avg_grade"] = df[
+    }.issubset(df_engineer.columns):
+        df_engineer["avg_grade"] = df_engineer[
             ["Curricular units 1st sem (grade)", "Curricular units 2nd sem (grade)"]
         ].mean(axis=1)
 
     # Fill any new NaN created
     for col in ["first_sem_pass_rate", "second_sem_pass_rate"]:
-        if col in df.columns:
-            df[col] = df[col].fillna(0.0)
+        if col in df_engineer.columns:
+            df_engineer[col] = df_engineer[col].fillna(0.0)
 
-    return df
+    return df_engineer
 
 
 # --------------------------- Machine Learning ---------------------------
