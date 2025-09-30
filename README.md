@@ -70,9 +70,24 @@ IDS706_week2_DataAnalysis/
 ---
 ## CI/CD Pipeline and Refactoring
 
-To automate this project, we added Continious Integration using Github Actions. To ensure that the workflow is running properly, go to the Actions tab and make sure the tests are passing. It should look something like the below image. 
+To automate this project, OI added Continious Integration using Github Actions. To ensure that the workflow is running properly, go to the Actions tab and make sure the tests are passing. It should look something like the below image. 
 
 ![Workflow](testing/workflow.png)
+
+### Renaming Variables
+
+I also incorporated some refactoring to make the code more readable and easier to follow. To refactor code in the future, use the F2 key to rename variables and more. Some examples are shown below. Here, we renamed some data frame variables to more specific names so it is easier to follow and read. 
+
+![Refactor](testing/refactor1.png)
+![Refactor](testing/refactor2.png)
+
+### Extracting Methods
+
+It is also important to extract methods to simplify code blocks and make them easier to follow. Below, we did this with a couple functions like drop duplicates and remove outliers to improve the organization of the code. 
+
+![Extract](testing/extract.png)
+![Extract](testing/extract2.png)
+
 
 ## Setup & Usage
 
@@ -92,8 +107,8 @@ source .venv/bin/activate
 - **polars>=0.20.0** – High-performance DataFrame library (performance comparison with pandas)  
 
 ### Developer Tools
-- **black** – Code formatting  
-- **flake8** – Code linting  
+- **black** – Code formatting (enforces a consistent and readable style across code by reformatting code into its own style guidelines)
+- **flake8** – Code linting (checks source code for potential errors, stylistic inconsistencies, and violations of coding standards)
 - **pylint** – Additional static code analysis  
 - **pytest-cov** – Coverage reporting  
 
@@ -103,7 +118,7 @@ source .venv/bin/activate
 ` git clone https://github.com/anvitasuresh/IDS706_week2_DataAnalysis.git`
 
 - **Run analysis**
-`make all` which runs the complete workflow. You can also run other make commands like make install to install and upgrade dependencies, make format to format code using black, make lint to lint code using flake8, make run to execute the analysis, and make clean to remove cache files. You can also run make test which tests the functions in analysis.py.
+`make all` which runs the complete workflow. You can also run other make commands like `make install` to install and upgrade dependencies, `make format` to format code using black, `make lint` to lint code using flake8, `make run` to execute the analysis, and `make clean` to remove cache files. You can also run `make test` which tests the functions in analysis.py. If you want to run individual files you can use commands like `python analysis.py` or `python test_analysis.py` as well.
 
 - **Build the Docker image and run inside container**
 
